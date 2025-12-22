@@ -1,6 +1,6 @@
 import { Sparkles, Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import punjabiMan from "@/assets/punjabi-man.jpeg";
+import drummerMan from "@/assets/drummer-man.png";
 
 const Footer = () => {
   return (
@@ -26,9 +26,9 @@ const Footer = () => {
           {/* Punjabi Man Image */}
           <div className="flex items-center justify-center lg:justify-start">
             <img 
-              src={punjabiMan} 
-              alt="KR Fireworks Celebration" 
-              className="w-48 h-48 object-cover rounded-lg shadow-lg border-4 border-yellow-400"
+              src={drummerMan} 
+              alt="KR Fireworks Drummer" 
+              className="w-48 h-auto object-contain"
             />
           </div>
 
