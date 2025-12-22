@@ -1,15 +1,16 @@
 import { Sparkles, Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import punjabiMan from "@/assets/punjabi-man.jpeg";
 
 const Footer = () => {
   return (
-    <footer className="relative bg-card border-t border-border overflow-hidden">
+    <footer className="relative bg-red-600 overflow-hidden">
       {/* Floating sparkles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
         {[...Array(15)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-primary rounded-full animate-float"
+            className="absolute w-1 h-1 bg-yellow-400 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               bottom: `${Math.random() * 100}%`,
@@ -21,24 +22,33 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+          {/* Punjabi Man Image */}
+          <div className="flex items-center justify-center lg:justify-start">
+            <img 
+              src={punjabiMan} 
+              alt="KR Fireworks Celebration" 
+              className="w-48 h-48 object-cover rounded-lg shadow-lg border-4 border-yellow-400"
+            />
+          </div>
+
           {/* About */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-bold text-foreground">KR FIREWORKS</h3>
+              <Sparkles className="w-6 h-6 text-yellow-400" />
+              <h3 className="text-xl font-bold text-white">KR FIREWORKS</h3>
             </div>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-red-100 text-sm">
               Your trusted source for premium quality Sivakasi fireworks. Bringing joy and sparkle to your celebrations since 2010.
             </p>
             <div className="flex gap-3">
-              <Button variant="ghost" size="icon" className="hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white hover:text-yellow-400 hover:bg-red-700">
                 <Facebook className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white hover:text-yellow-400 hover:bg-red-700">
                 <Twitter className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white hover:text-yellow-400 hover:bg-red-700">
                 <Instagram className="w-5 h-5" />
               </Button>
             </div>
@@ -46,30 +56,30 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-bold text-foreground">Quick Links</h4>
+            <h4 className="text-lg font-bold text-white">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Shop All Products
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Combo Offers
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Safety Guidelines
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Track Order
                 </a>
               </li>
@@ -78,30 +88,30 @@ const Footer = () => {
 
           {/* Policies */}
           <div className="space-y-4">
-            <h4 className="text-lg font-bold text-foreground">Policies</h4>
+            <h4 className="text-lg font-bold text-white">Policies</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Shipping Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Return Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   Terms & Conditions
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-sm">
                   FAQs
                 </a>
               </li>
@@ -110,23 +120,23 @@ const Footer = () => {
 
           {/* Contact */}
           <div className="space-y-4">
-            <h4 className="text-lg font-bold text-foreground">Contact Us</h4>
+            <h4 className="text-lg font-bold text-white">Contact Us</h4>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <p className="text-muted-foreground text-sm">
+                <MapPin className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                <p className="text-red-100 text-sm">
                   123 Fireworks Street, Sivakasi, Tamil Nadu 626123
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-muted-foreground hover:text-primary text-sm">
+                <Phone className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                <a href="tel:+919876543210" className="text-red-100 hover:text-yellow-400 text-sm">
                   +91 98765 43210
                 </a>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-                <a href="mailto:info@krfireworks.com" className="text-muted-foreground hover:text-primary text-sm">
+                <Mail className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                <a href="mailto:info@krfireworks.com" className="text-red-100 hover:text-yellow-400 text-sm">
                   info@krfireworks.com
                 </a>
               </div>
@@ -135,8 +145,8 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-border text-center">
-          <p className="text-muted-foreground text-sm">
+        <div className="pt-8 border-t border-red-500 text-center">
+          <p className="text-red-100 text-sm">
             © 2024 KR Fireworks. All rights reserved. | Authentic Sivakasi Crackers
           </p>
         </div>
