@@ -1,10 +1,19 @@
 import { Sparkles, Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import drummerMan from "@/assets/drummer-man.png";
+import drummerMan from "@/assets/drummer-transparent.png";
 
 const Footer = () => {
   return (
     <footer className="relative bg-red-600 overflow-hidden">
+      {/* Drummer positioned at bottom left */}
+      <div className="absolute bottom-0 left-4 z-20 hidden lg:block">
+        <img 
+          src={drummerMan} 
+          alt="KR Fireworks Drummer" 
+          className="h-72 w-auto object-contain drop-shadow-lg"
+        />
+      </div>
+
       {/* Floating sparkles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
         {[...Array(15)].map((_, i) => (
@@ -22,16 +31,7 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
-          {/* Punjabi Man Image */}
-          <div className="flex items-center justify-center lg:justify-start">
-            <img 
-              src={drummerMan} 
-              alt="KR Fireworks Drummer" 
-              className="w-48 h-auto object-contain"
-            />
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 lg:pl-56">
           {/* About */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-red-500 text-center">
+        <div className="pt-8 border-t border-red-500 text-center lg:pl-56">
           <p className="text-red-100 text-sm">
             © 2024 KR Fireworks. All rights reserved. | Authentic Sivakasi Crackers
           </p>
