@@ -5,12 +5,12 @@ import drummerMan from "@/assets/drummer-clean.png";
 const Footer = () => {
   return (
     <footer className="relative bg-red-600 overflow-hidden">
-      {/* Drummer positioned at bottom left, aligned with footer bottom */}
-      <div className="absolute bottom-0 left-8 z-20 hidden lg:flex items-end">
+      {/* Drummer positioned to align with KR Fireworks text */}
+      <div className="absolute top-8 left-8 z-20 hidden lg:flex items-start">
         <img 
           src={drummerMan} 
           alt="KR Fireworks Drummer" 
-          className="h-60 w-auto object-contain object-bottom"
+          className="h-56 w-auto object-contain"
         />
       </div>
 
