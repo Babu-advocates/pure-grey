@@ -1,16 +1,16 @@
 import { Sparkles, Mail, Phone, MapPin, Facebook, Twitter, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import drummerMan from "@/assets/drummer-transparent.png";
+import drummerMan from "@/assets/drummer-clean.png";
 
 const Footer = () => {
   return (
     <footer className="relative bg-red-600 overflow-hidden">
-      {/* Drummer positioned at bottom left */}
-      <div className="absolute bottom-0 left-4 z-20 hidden lg:block">
+      {/* Drummer positioned at bottom left, aligned with footer bottom */}
+      <div className="absolute bottom-0 left-8 z-20 hidden lg:flex items-end">
         <img 
           src={drummerMan} 
           alt="KR Fireworks Drummer" 
-          className="h-72 w-auto object-contain drop-shadow-lg"
+          className="h-60 w-auto object-contain object-bottom"
         />
       </div>
 
