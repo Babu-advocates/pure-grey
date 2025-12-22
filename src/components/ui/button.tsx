@@ -15,6 +15,8 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        festive: "bg-gradient-gold text-primary-foreground font-bold shadow-[var(--glow-gold)] hover:shadow-[0_0_40px_hsl(45_100%_55%/0.8)] hover:scale-105 transition-all duration-300",
+        fire: "bg-gradient-fire text-foreground font-bold shadow-[var(--glow-fire)] hover:scale-105 transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
