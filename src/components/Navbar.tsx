@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles, Menu, User, LogOut } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -33,16 +33,17 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <NavLink to="/" className="flex items-center gap-3 group cursor-pointer">
-            <div className="relative">
-              <Sparkles className="w-8 h-8 text-primary animate-glow-pulse group-hover:rotate-12 transition-transform duration-300" />
-              <div className="absolute inset-0 bg-primary/20 blur-xl animate-pulse group-hover:scale-150 transition-transform" />
-            </div>
+          <NavLink to="/" className="flex items-center gap-2 md:gap-3 group cursor-pointer">
+            <img
+              src="/logo.png"
+              alt="KR Fireworks Logo"
+              className="w-8 h-8 md:w-12 md:h-12 object-contain group-hover:scale-105 transition-transform duration-300"
+            />
             <div>
-              <h1 className="text-2xl font-black speed-text bg-gradient-gold bg-clip-text text-transparent group-hover:scale-105 transition-transform">
+              <h1 className="text-lg md:text-2xl font-black speed-text bg-gradient-gold bg-clip-text text-transparent group-hover:scale-105 transition-transform">
                 KR FIREWORKS
               </h1>
-              <p className="text-xs text-muted-foreground group-hover:text-primary transition-colors">Premium Sivakasi Crackers</p>
+              <p className="text-[10px] md:text-xs text-red-600 font-medium group-hover:text-red-500 transition-colors">'n' joy with Every moments...</p>
             </div>
           </NavLink>
 
@@ -97,7 +98,7 @@ const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button 
+              <Button
                 onClick={() => navigate("/auth")}
                 className="hidden md:flex bg-gradient-gold hover:opacity-90 transition-opacity"
               >
@@ -142,9 +143,9 @@ const Navbar = () => {
                 <NavLink to="/profile" className="block py-2 text-foreground hover:text-primary transition-colors font-medium">
                   My Profile
                 </NavLink>
-                <Button 
-                  variant="ghost" 
-                  onClick={handleSignOut} 
+                <Button
+                  variant="ghost"
+                  onClick={handleSignOut}
                   className="w-full justify-start"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
@@ -152,7 +153,7 @@ const Navbar = () => {
                 </Button>
               </>
             ) : (
-              <Button 
+              <Button
                 onClick={() => navigate("/auth")}
                 className="w-full bg-gradient-gold hover:opacity-90 transition-opacity mt-2"
               >

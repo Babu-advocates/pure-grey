@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Loader2, Eye, Sparkles, Zap, Star } from "lucide-react";
+import { ShoppingCart, Loader2, Eye, Sparkles, Zap, Star, Filter, SlidersHorizontal, X } from "lucide-react";
 import { categories as allCategories } from "@/data/products";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +32,11 @@ const Shop = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 100000 });
+  const [showFilters, setShowFilters] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,25 +92,40 @@ const Shop = () => {
 
       if (error) throw error;
       setProducts(data || []);
-      
-      // Calculate categories with product counts
-      const categoryCounts: Record<string, number> = {};
+
+      // Calculate price range from products
+      if (data && data.length > 0) {
+        const prices = data.map(p => parsePrice(p.price)).filter(p => p > 0);
+        if (prices.length > 0) {
+          setPriceRange({
+            min: Math.min(...prices),
+            max: Math.max(...prices)
+          });
+        }
+      }
+
+      // Calculate categories with product counts from database (dynamic)
+      const categoryCounts: Record<string, { name: string; count: number }> = {};
       data?.forEach(product => {
-        // Normalize category for matching (lowercase, replace spaces with hyphens)
-        const normalizedCategory = product.category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
-        categoryCounts[normalizedCategory] = (categoryCounts[normalizedCategory] || 0) + 1;
+        const categoryName = product.category;
+        const normalizedCategory = categoryName.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
+        if (!categoryCounts[normalizedCategory]) {
+          categoryCounts[normalizedCategory] = { name: categoryName, count: 0 };
+        }
+        categoryCounts[normalizedCategory].count += 1;
       });
 
-      // Filter categories to only show those with products
-      const availableCategories = allCategories
-        .filter(cat => cat.id === "all" || categoryCounts[cat.id] > 0)
-        .map(cat => ({
-          id: cat.id,
-          name: cat.name,
-          count: cat.id === "all" ? data?.length || 0 : categoryCounts[cat.id] || 0
-        }));
+      // Create categories array from database data
+      const dbCategories: Category[] = [
+        { id: "all", name: "All Products", count: data?.length || 0 },
+        ...Object.entries(categoryCounts).map(([id, { name, count }]) => ({
+          id,
+          name,
+          count
+        }))
+      ];
 
-      setCategories(availableCategories);
+      setCategories(dbCategories);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
@@ -118,12 +138,53 @@ const Shop = () => {
     }
   };
 
-  const filteredProducts = selectedCategory === "all" 
-    ? products 
-    : products.filter(p => {
-        const normalizedCategory = p.category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
-        return normalizedCategory === selectedCategory;
-      });
+  // Parse price string to number (e.g., "₹1,499" -> 1499)
+  const parsePrice = (priceStr: string): number => {
+    if (!priceStr) return 0;
+    const numStr = priceStr.replace(/[₹,\s]/g, '');
+    return parseFloat(numStr) || 0;
+  };
+
+  // Toggle category selection
+  const toggleCategory = (categoryId: string) => {
+    if (categoryId === "all") {
+      setSelectedCategories([]);
+      setSelectedCategory("all");
+    } else {
+      setSelectedCategory(""); // Clear single select
+      setSelectedCategories(prev =>
+        prev.includes(categoryId)
+          ? prev.filter(id => id !== categoryId)
+          : [...prev, categoryId]
+      );
+    }
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    setSelectedCategory("all");
+    setMinPrice("");
+    setMaxPrice("");
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = selectedCategories.length > 0 || minPrice !== "" || maxPrice !== "";
+
+  // Filter products based on categories and price
+  const filteredProducts = products.filter(p => {
+    // Category filter
+    const normalizedCategory = p.category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
+    const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(normalizedCategory);
+
+    // Price filter
+    const productPrice = parsePrice(p.price);
+    const minPriceNum = minPrice ? parseFloat(minPrice) : 0;
+    const maxPriceNum = maxPrice ? parseFloat(maxPrice) : Infinity;
+    const priceMatch = productPrice >= minPriceNum && productPrice <= maxPriceNum;
+
+    return categoryMatch && priceMatch;
+  });
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -139,8 +200,8 @@ const Shop = () => {
       </div>
 
       <Navbar />
-      
-      <main className="container mx-auto px-4 py-12 relative z-10">
+
+      <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 relative z-10">
         {/* Hero Section */}
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-flex items-center gap-3 mb-6">
@@ -150,11 +211,12 @@ const Shop = () => {
             </Badge>
             <Sparkles className="w-5 h-5 text-secondary animate-pulse" style={{ animationDelay: '0.5s' }} />
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 relative">
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
-              Light Up Your Celebrations
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 relative">
+            <span className="text-red-600">Light Up </span>
+            <span className="text-red-600">
+              Your Celebrations
             </span>
-            <Zap className="inline-block w-10 h-10 text-primary ml-3 animate-bounce" />
+            <Zap className="inline-block w-6 h-6 sm:w-10 sm:h-10 text-primary ml-2 sm:ml-3 animate-bounce" />
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-4">
             Discover premium quality fireworks for unforgettable moments
@@ -169,32 +231,146 @@ const Shop = () => {
           </div>
         </div>
 
-        {/* Category Filter */}
+        {/* Filter Section */}
         <div className="mb-10 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <div className="flex flex-wrap gap-2.5 justify-center max-w-6xl mx-auto">
-            {categories.map((cat, index) => (
+          {/* Filter Toggle Button */}
+          <div className="flex justify-center mb-4">
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              variant="outline"
+              className="flex items-center gap-2 border-red-500 text-red-600 hover:bg-red-50"
+            >
+              <Filter className="w-4 h-4" />
+              {showFilters ? 'Hide Filters' : 'Show Filters'}
+              {hasActiveFilters && (
+                <Badge className="ml-2 bg-red-600 text-white text-xs">Active</Badge>
+              )}
+            </Button>
+          </div>
+
+          {/* Filter Panel */}
+          {showFilters && (
+            <div className="bg-card border border-border rounded-xl p-4 sm:p-6 max-w-4xl mx-auto shadow-lg animate-fade-in">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <SlidersHorizontal className="w-5 h-5 text-red-600" />
+                  Filter Products
+                </h3>
+                {hasActiveFilters && (
+                  <Button
+                    onClick={clearFilters}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600 hover:bg-red-50"
+                  >
+                    <X className="w-4 h-4 mr-1" />
+                    Clear All
+                  </Button>
+                )}
+              </div>
+
+              {/* Categories Section */}
+              <div className="mb-6">
+                <h4 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">Categories</h4>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((cat) => (
+                    <Button
+                      key={cat.id}
+                      variant={
+                        (cat.id === "all" && selectedCategories.length === 0) ||
+                          selectedCategories.includes(cat.id)
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() => toggleCategory(cat.id)}
+                      size="sm"
+                      className={`transition-all duration-300 ${(cat.id === "all" && selectedCategories.length === 0) ||
+                        selectedCategories.includes(cat.id)
+                        ? "bg-yellow-400 text-red-600 hover:bg-yellow-500 border-0"
+                        : "hover:border-red-400 hover:text-red-600"
+                        }`}
+                    >
+                      {cat.name}
+                      <span className="ml-1 text-xs opacity-70">({cat.count})</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range Section */}
+              <div className="mb-6">
+                <h4 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">
+                  Price Range (₹{priceRange.min} - ₹{priceRange.max})
+                </h4>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Min:</span>
+                    <input
+                      type="number"
+                      placeholder={priceRange.min.toString()}
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="w-28 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Max:</span>
+                    <input
+                      type="number"
+                      placeholder={priceRange.max.toString()}
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="w-28 px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Filter Summary */}
+              {hasActiveFilters && (
+                <div className="pt-4 border-t border-border">
+                  <p className="text-sm text-muted-foreground">
+                    Showing <span className="font-bold text-red-600">{filteredProducts.length}</span> products
+                    {selectedCategories.length > 0 && (
+                      <> in <span className="font-medium">{selectedCategories.length}</span> {selectedCategories.length === 1 ? 'category' : 'categories'}</>
+                    )}
+                    {(minPrice || maxPrice) && (
+                      <> with price {minPrice && <>from ₹{minPrice}</>}{maxPrice && <> to ₹{maxPrice}</>}</>
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Quick Category Pills (always visible) */}
+          <div className="flex flex-wrap gap-2.5 justify-center max-w-6xl mx-auto mt-4">
+            {categories.slice(0, 8).map((cat) => (
               <Button
                 key={cat.id}
-                variant={selectedCategory === cat.id ? "default" : "outline"}
-                onClick={() => setSelectedCategory(cat.id)}
+                variant={
+                  (cat.id === "all" && selectedCategories.length === 0) ||
+                    selectedCategories.includes(cat.id)
+                    ? "default"
+                    : "outline"
+                }
+                onClick={() => toggleCategory(cat.id)}
                 size="sm"
-                className={`group relative overflow-hidden transition-all duration-300 ${
-                  selectedCategory === cat.id 
-                    ? "bg-gradient-to-r from-primary via-secondary to-accent shadow-lg shadow-primary/20 border-0 text-primary-foreground" 
-                    : "hover:border-primary/50 hover:shadow-md hover:bg-primary/5 border-border/50"
-                }`}
-                style={{ animationDelay: `${index * 0.05}s` }}
+                className={`group relative overflow-hidden transition-all duration-300 ${(cat.id === "all" && selectedCategories.length === 0) ||
+                  selectedCategories.includes(cat.id)
+                  ? "bg-yellow-400 shadow-lg shadow-yellow-400/20 border-0 text-red-600 hover:bg-yellow-500"
+                  : "hover:border-primary/50 hover:shadow-md hover:bg-primary/5 border-border/50"
+                  }`}
               >
                 <span className="relative z-10 font-medium flex items-center gap-2 text-sm">
-                  {selectedCategory === cat.id && <Sparkles className="w-3.5 h-3.5 animate-pulse" />}
+                  {((cat.id === "all" && selectedCategories.length === 0) || selectedCategories.includes(cat.id)) && (
+                    <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                  )}
                   {cat.name}
                   {cat.count > 0 && (
                     <span className="text-xs opacity-70 font-normal">({cat.count})</span>
                   )}
                 </span>
-                {selectedCategory === cat.id && (
-                  <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 animate-shimmer" />
-                )}
               </Button>
             ))}
           </div>
@@ -218,10 +394,10 @@ const Shop = () => {
             <p className="text-muted-foreground">Try selecting a different category</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             {filteredProducts.map((product, index) => (
-              <Card 
-                key={product.id} 
+              <Card
+                key={product.id}
                 className="group overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 animate-fade-in bg-card relative"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
@@ -229,7 +405,7 @@ const Shop = () => {
                 <div className="absolute top-3 left-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 </div>
-                
+
                 <CardHeader className="p-0 relative overflow-hidden">
                   <div className="relative aspect-square">
                     <img
@@ -245,19 +421,19 @@ const Shop = () => {
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
+
                     {/* Floating badges */}
-                    <Badge 
-                      variant="secondary" 
-                      className="absolute top-3 right-3 bg-background/95 backdrop-blur-sm border border-border shadow-md text-xs"
+                    <Badge
+                      variant="secondary"
+                      className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-background/95 backdrop-blur-sm border border-border shadow-md text-[10px] sm:text-xs"
                     >
                       🎁 {product.unit || "Box"}
                     </Badge>
-                    
+
                     {/* Stock indicator */}
                     {product.stock > 0 && (
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className="absolute bottom-3 left-3 bg-primary text-primary-foreground border-0 backdrop-blur-sm text-xs"
                       >
                         ✨ In Stock
@@ -265,22 +441,22 @@ const Shop = () => {
                     )}
                   </div>
                 </CardHeader>
-                
-                <CardContent className="p-5">
-                  <CardTitle className="mb-2 text-base font-bold group-hover:text-primary transition-colors line-clamp-2">
+
+                <CardContent className="p-3 sm:p-5">
+                  <CardTitle className="mb-1 sm:mb-2 text-sm sm:text-base font-bold group-hover:text-primary transition-colors line-clamp-2">
                     {product.name}
                   </CardTitle>
-                  <p className="text-muted-foreground text-xs mb-4 line-clamp-2 leading-relaxed">
+                  <p className="text-muted-foreground text-[10px] sm:text-xs mb-2 sm:mb-4 line-clamp-2 leading-relaxed hidden sm:block">
                     {product.description}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground mb-0.5">Price</span>
-                      <span className="text-2xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                      <span className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 hidden sm:block">Price</span>
+                      <span className="text-lg sm:text-2xl font-black text-red-600">
                         {product.price}
                       </span>
                     </div>
-                    <div className="flex flex-col items-end gap-0.5">
+                    <div className="hidden sm:flex flex-col items-end gap-0.5">
                       <div className="flex gap-0.5">
                         <Star className="w-3 h-3 text-primary fill-primary" />
                         <Star className="w-3 h-3 text-primary fill-primary" />
@@ -292,24 +468,24 @@ const Shop = () => {
                     </div>
                   </div>
                 </CardContent>
-                
-                <CardFooter className="p-5 pt-0 flex gap-2">
-                  <Button 
+
+                <CardFooter className="p-3 sm:p-5 pt-0 flex gap-1 sm:gap-2">
+                  <Button
                     size="sm"
-                    className="flex-1 group/btn border-border hover:border-primary hover:bg-primary/5" 
+                    className="flex-1 group/btn border-border hover:border-primary hover:bg-primary/5 px-2 sm:px-3"
                     variant="outline"
                     onClick={() => navigate(`/product/${product.id}`)}
                   >
-                    <Eye className="w-3.5 h-3.5 mr-1.5 group-hover/btn:scale-110 transition-transform" />
-                    <span className="text-xs">View</span>
+                    <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 sm:mr-1.5 group-hover/btn:scale-110 transition-transform" />
+                    <span className="text-[10px] sm:text-xs hidden sm:inline">View</span>
                   </Button>
-                  <Button 
+                  <Button
                     size="sm"
-                    className="flex-1 bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-md hover:shadow-primary/20 transition-all group/btn border-0 text-primary-foreground" 
+                    className="flex-1 bg-yellow-400 hover:bg-yellow-500 hover:shadow-md transition-all group/btn border-0 text-red-600 font-semibold px-2 sm:px-3"
                     onClick={() => handleAddToCart(product)}
                   >
-                    <ShoppingCart className="w-3.5 h-3.5 mr-1.5 group-hover/btn:rotate-12 transition-transform" />
-                    <span className="text-xs">Add to Cart</span>
+                    <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 sm:mr-1.5 group-hover/btn:rotate-12 transition-transform" />
+                    <span className="text-[10px] sm:text-xs hidden sm:inline">Add to Cart</span>
                   </Button>
                 </CardFooter>
 

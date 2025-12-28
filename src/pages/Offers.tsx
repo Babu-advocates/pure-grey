@@ -73,7 +73,7 @@ const Offers = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 animate-fade-in">
@@ -85,7 +85,7 @@ const Offers = () => {
             <Sparkles className="w-5 h-5 text-secondary animate-pulse" style={{ animationDelay: '0.5s' }} />
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+            <span className="text-red-600">
               Exclusive Deals & Offers
             </span>
           </h1>
@@ -115,15 +115,15 @@ const Offers = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
             {products.map((product, index) => (
-              <Card 
-                key={product.id} 
+              <Card
+                key={product.id}
                 className="group overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 animate-fade-in bg-card relative"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="absolute top-3 left-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                 </div>
-                
+
                 <CardHeader className="p-0 relative overflow-hidden">
                   <div className="relative aspect-square">
                     <img
@@ -133,17 +133,17 @@ const Offers = () => {
                       onClick={() => navigate(`/product/${product.id}`)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    <Badge 
-                      variant="secondary" 
+
+                    <Badge
+                      variant="secondary"
                       className="absolute top-3 right-3 bg-background/95 backdrop-blur-sm border border-border shadow-md text-xs"
                     >
                       🎁 {product.unit || "Box"}
                     </Badge>
-                    
+
                     {product.stock > 0 && (
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className="absolute bottom-3 left-3 bg-primary text-primary-foreground border-0 backdrop-blur-sm text-xs"
                       >
                         ✨ In Stock
@@ -151,7 +151,7 @@ const Offers = () => {
                     )}
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="p-5">
                   <CardTitle className="mb-2 text-base font-bold group-hover:text-primary transition-colors line-clamp-2">
                     {product.name}
@@ -162,7 +162,7 @@ const Offers = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="text-xs text-muted-foreground mb-0.5">Price</span>
-                      <span className="text-2xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                      <span className="text-2xl font-black text-red-600">
                         {product.price}
                       </span>
                     </div>
@@ -178,20 +178,20 @@ const Offers = () => {
                     </div>
                   </div>
                 </CardContent>
-                
+
                 <CardFooter className="p-5 pt-0 flex gap-2">
-                  <Button 
+                  <Button
                     size="sm"
-                    className="flex-1 group/btn border-border hover:border-primary hover:bg-primary/5" 
+                    className="flex-1 group/btn border-border hover:border-primary hover:bg-primary/5"
                     variant="outline"
                     onClick={() => navigate(`/product/${product.id}`)}
                   >
                     <Eye className="w-3.5 h-3.5 mr-1.5 group-hover/btn:scale-110 transition-transform" />
                     <span className="text-xs">View</span>
                   </Button>
-                  <Button 
+                  <Button
                     size="sm"
-                    className="flex-1 bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-md hover:shadow-primary/20 transition-all group/btn border-0 text-primary-foreground"
+                    className="flex-1 bg-yellow-400 hover:bg-yellow-500 hover:shadow-md transition-all group/btn border-0 text-red-600 font-semibold"
                     onClick={() => handleAddToCart(product)}
                   >
                     <ShoppingCart className="w-3.5 h-3.5 mr-1.5 group-hover/btn:rotate-12 transition-transform" />

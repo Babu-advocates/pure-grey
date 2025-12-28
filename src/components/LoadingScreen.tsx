@@ -7,10 +7,25 @@ interface LoadingScreenProps {
 
 const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if mobile (width < 640px)
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+
+    // If mobile, skip loading video immediately
+    if (window.innerWidth < 640) {
+      setIsVisible(false);
+      onComplete();
+      return;
+    }
+
     const video = document.getElementById('loading-video') as HTMLVideoElement;
-    
+
     const handleVideoEnd = () => {
       setIsVisible(false);
       setTimeout(() => {
@@ -34,7 +49,8 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
     return () => clearTimeout(fallbackTimeout);
   }, [onComplete]);
 
-  if (!isVisible) return null;
+  // Don't show loading screen on mobile
+  if (!isVisible || isMobile) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex items-center justify-center animate-fade-in">
