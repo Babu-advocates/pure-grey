@@ -7,19 +7,43 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 
+interface DashboardStats {
+  totalUsers: number;
+  totalOrders: number;
+  totalProducts: number;
+  totalRevenue: number;
+}
+
+interface Order {
+  id: string;
+  customer_name: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+}
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [adminUser, setAdminUser] = useState<any>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    totalOrders: 0,
+    totalProducts: 0,
+    totalRevenue: 0
+  });
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAdminAuth();
+    fetchDashboardStats();
   }, [navigate]);
 
   const checkAdminAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       navigate('/admin');
       return;
@@ -50,6 +74,61 @@ const AdminDashboard = () => {
     });
   };
 
+  const fetchDashboardStats = async () => {
+    try {
+      // Fetch Total Users
+      const { count: usersCount, error: usersError } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      if (usersError) console.error("Error fetching users count:", usersError);
+
+      // Fetch Total Products
+      const { count: productsCount, error: productsError } = await supabase
+        .from('products')
+        .select('*', { count: 'exact', head: true });
+
+      if (productsError) console.error("Error fetching products count:", productsError);
+
+      // Fetch Orders for Count and Revenue
+      const { data: ordersData, error: ordersError } = await supabase
+        .from('orders')
+        .select('total_amount');
+
+      if (ordersError) throw ordersError;
+
+      const ordersCount = ordersData?.length || 0;
+      const revenue = ordersData?.reduce((sum, order) => sum + (Number(order.total_amount) || 0), 0) || 0;
+
+      setStats({
+        totalUsers: usersCount || 0,
+        totalOrders: ordersCount,
+        totalProducts: productsCount || 0,
+        totalRevenue: revenue
+      });
+
+      // Fetch Recent Orders
+      const { data: recentOrdersData, error: recentOrdersError } = await supabase
+        .from('orders')
+        .select('id, customer_name, total_amount, status, created_at')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (recentOrdersError) throw recentOrdersError;
+      setRecentOrders(recentOrdersData || []);
+
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load dashboard statistics",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({
@@ -57,6 +136,13 @@ const AdminDashboard = () => {
       description: "You have been logged out successfully.",
     });
     navigate('/admin');
+  };
+
+  const formatCurrency = (amount: number) => {
+    if (amount >= 100000) {
+      return `₹${(amount / 100000).toFixed(1)}L`;
+    }
+    return `₹${amount.toLocaleString('en-IN')}`;
   };
 
   if (!adminUser) return null;
@@ -115,7 +201,7 @@ const AdminDashboard = () => {
                   Admin
                 </Badge>
               </div>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="ghost"
                 className="hidden md:flex hover:bg-destructive/10 hover:text-destructive transition-all duration-300 group"
@@ -123,7 +209,7 @@ const AdminDashboard = () => {
                 <LogOut className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
                 Logout
               </Button>
-              
+
               {/* Mobile Menu Toggle */}
               <Button
                 variant="ghost"
@@ -158,7 +244,7 @@ const AdminDashboard = () => {
               <Link to="/admin/users" className="block py-2 text-foreground hover:text-primary transition-colors font-medium">
                 Users
               </Link>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="ghost"
                 className="w-full justify-start hover:bg-destructive/10 hover:text-destructive"
@@ -196,10 +282,12 @@ const AdminDashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-4xl font-black text-foreground group-hover:text-primary transition-colors">1,234</div>
+              <div className="text-4xl font-black text-foreground group-hover:text-primary transition-colors">
+                {stats.totalUsers.toLocaleString()}
+              </div>
               <div className="flex items-center gap-2 mt-2">
-                <TrendingUp className="w-3 h-3 text-primary" />
-                <p className="text-xs text-primary font-semibold">+12% from last month</p>
+                <Users className="w-3 h-3 text-primary" />
+                <p className="text-xs text-primary font-semibold">Registered Accounts</p>
               </div>
             </CardContent>
           </Card>
@@ -213,10 +301,12 @@ const AdminDashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-4xl font-black text-foreground group-hover:text-secondary transition-colors">856</div>
+              <div className="text-4xl font-black text-foreground group-hover:text-secondary transition-colors">
+                {stats.totalOrders.toLocaleString()}
+              </div>
               <div className="flex items-center gap-2 mt-2">
-                <TrendingUp className="w-3 h-3 text-secondary" />
-                <p className="text-xs text-secondary font-semibold">+8% from last month</p>
+                <ShoppingCart className="w-3 h-3 text-secondary" />
+                <p className="text-xs text-secondary font-semibold">Lifetime Orders</p>
               </div>
             </CardContent>
           </Card>
@@ -230,10 +320,12 @@ const AdminDashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-4xl font-black text-foreground group-hover:text-accent transition-colors">142</div>
+              <div className="text-4xl font-black text-foreground group-hover:text-accent transition-colors">
+                {stats.totalProducts.toLocaleString()}
+              </div>
               <div className="flex items-center gap-2 mt-2">
-                <CheckCircle className="w-3 h-3 text-accent" />
-                <p className="text-xs text-accent font-semibold">+5 new this week</p>
+                <Package className="w-3 h-3 text-accent" />
+                <p className="text-xs text-accent font-semibold">Active Inventory</p>
               </div>
             </CardContent>
           </Card>
@@ -247,10 +339,12 @@ const AdminDashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">₹2.4L</div>
+              <div className="text-2xl lg:text-3xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {formatCurrency(stats.totalRevenue)}
+              </div>
               <div className="flex items-center gap-2 mt-2">
                 <TrendingUp className="w-3 h-3 text-primary" />
-                <p className="text-xs text-primary font-semibold">+15% from last month</p>
+                <p className="text-xs text-primary font-semibold">Total Earnings</p>
               </div>
             </CardContent>
           </Card>
@@ -274,44 +368,42 @@ const AdminDashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-6">
-              <div className="space-y-3">
-                {[
-                  { id: 1001, name: "Rajesh Kumar", amount: 4250, status: "completed" },
-                  { id: 1002, name: "Priya Singh", amount: 2890, status: "processing" },
-                  { id: 1003, name: "Amit Patel", amount: 5670, status: "pending" },
-                  { id: 1004, name: "Sneha Reddy", amount: 1950, status: "completed" }
-                ].map((order, i) => (
-                  <div key={order.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-muted/30 to-muted/10 rounded-lg border border-border/30 hover:border-primary/30 transition-all duration-300 group hover:scale-[1.02]" style={{ animationDelay: `${500 + i * 50}ms` }}>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                        <ShoppingCart className="w-4 h-4 text-primary" />
+              {recentOrders.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">No orders yet.</div>
+              ) : (
+                <div className="space-y-3">
+                  {recentOrders.map((order, i) => (
+                    <div key={order.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-muted/30 to-muted/10 rounded-lg border border-border/30 hover:border-primary/30 transition-all duration-300 group hover:scale-[1.02]" style={{ animationDelay: `${500 + i * 50}ms` }}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                          <ShoppingCart className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Order #{order.id.slice(0, 8)}</p>
+                          <p className="text-sm text-muted-foreground">{order.customer_name}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Order #{order.id}</p>
-                        <p className="text-sm text-muted-foreground">{order.name}</p>
-                      </div>
-                    </div>
-                    <div className="text-right flex items-center gap-3">
-                      <div>
-                        <p className="font-bold text-primary text-lg">₹{order.amount}</p>
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${
-                            order.status === 'completed' ? 'bg-primary/10 text-primary border-primary/30' :
-                            order.status === 'processing' ? 'bg-secondary/10 text-secondary border-secondary/30' :
-                            'bg-muted text-muted-foreground border-border'
-                          }`}
-                        >
-                          {order.status === 'completed' ? <CheckCircle className="w-3 h-3 mr-1" /> :
-                           order.status === 'processing' ? <Clock className="w-3 h-3 mr-1" /> :
-                           <AlertCircle className="w-3 h-3 mr-1" />}
-                          {order.status}
-                        </Badge>
+                      <div className="text-right flex items-center gap-3">
+                        <div>
+                          <p className="font-bold text-primary text-sm sm:text-base">₹{order.total_amount}</p>
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] sm:text-xs ${order.status === 'completed' ? 'bg-primary/10 text-primary border-primary/30' :
+                                order.status === 'processing' ? 'bg-secondary/10 text-secondary border-secondary/30' :
+                                  'bg-muted text-muted-foreground border-border'
+                              }`}
+                          >
+                            {order.status === 'completed' ? <CheckCircle className="w-3 h-3 mr-1" /> :
+                              order.status === 'processing' ? <Clock className="w-3 h-3 mr-1" /> :
+                                <AlertCircle className="w-3 h-3 mr-1" />}
+                            {order.status}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -324,24 +416,20 @@ const AdminDashboard = () => {
               <CardDescription>Manage your store efficiently</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-3">
-              <Button 
+              <Button
                 onClick={() => navigate('/admin/products')}
                 className="w-full h-14 bg-gradient-to-r from-primary via-secondary to-primary hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/20 group bg-[length:200%_100%] hover:bg-[position:100%_0] animate-shimmer text-lg font-bold"
               >
                 <Package className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
                 Add New Product
               </Button>
-              <Button variant="outline" className="w-full h-12 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 group">
+              <Button onClick={() => navigate('/admin/users')} variant="outline" className="w-full h-12 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 group">
                 <Users className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                 Manage Users
               </Button>
-              <Button variant="outline" className="w-full h-12 border-secondary/30 hover:border-secondary hover:bg-secondary/5 transition-all duration-300 group">
+              <Button onClick={() => navigate('/admin/orders')} variant="outline" className="w-full h-12 border-secondary/30 hover:border-secondary hover:bg-secondary/5 transition-all duration-300 group">
                 <ShoppingCart className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                 View All Orders
-              </Button>
-              <Button variant="outline" className="w-full h-12 border-accent/30 hover:border-accent hover:bg-accent/5 transition-all duration-300 group">
-                <BarChart3 className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                Analytics Report
               </Button>
             </CardContent>
           </Card>

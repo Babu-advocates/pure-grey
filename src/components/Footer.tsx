@@ -5,14 +5,7 @@ import footerGroup from "@/assets/footer-group.png";
 const Footer = () => {
   return (
     <footer className="relative bg-red-600 overflow-hidden">
-      {/* Group image positioned to align with KR Fireworks text */}
-      <div className="absolute top-4 left-4 z-20 hidden lg:flex items-start">
-        <img
-          src={footerGroup}
-          alt="KR Fireworks Celebration"
-          className="h-64 w-auto object-contain"
-        />
-      </div>
+
 
       {/* Floating sparkles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
@@ -31,121 +24,133 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8 sm:py-12 relative z-10">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8 lg:pl-56">
-          {/* About */}
-          <div className="col-span-2 sm:col-span-2 md:col-span-1 space-y-3 sm:space-y-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
-              <h3 className="text-lg sm:text-xl font-bold text-white">KR FIREWORKS</h3>
-            </div>
-            <p className="text-red-100 text-xs sm:text-sm">
-              Your trusted source for premium quality Sivakasi fireworks. Bringing joy and sparkle to your celebrations since 2010.
-            </p>
-            <div className="flex gap-2 sm:gap-3">
-              <Button variant="ghost" size="icon" className="w-8 h-8 sm:w-10 sm:h-10 text-white hover:text-yellow-400 hover:bg-red-700">
-                <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="w-8 h-8 sm:w-10 sm:h-10 text-white hover:text-yellow-400 hover:bg-red-700">
-                <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="w-8 h-8 sm:w-10 sm:h-10 text-white hover:text-yellow-400 hover:bg-red-700">
-                <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
-              </Button>
-            </div>
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-2 items-start mb-6 sm:mb-8">
+
+          {/* Group Image - Visible on LG screens and up, part of the layout now */}
+          <div className="block flex-shrink-0 -mt-8 sm:-mt-12 mx-auto lg:mx-0">
+            <img
+              src={footerGroup}
+              alt="KR Fireworks Celebration"
+              className="h-48 sm:h-64 w-auto object-contain"
+            />
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="text-base sm:text-lg font-bold text-white">Quick Links</h4>
-            <ul className="space-y-1.5 sm:space-y-2">
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Shop All Products
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Combo Offers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Safety Guidelines
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Track Order
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Policies */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="text-base sm:text-lg font-bold text-white">Policies</h4>
-            <ul className="space-y-1.5 sm:space-y-2">
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Shipping Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Return Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  Terms & Conditions
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
-                  FAQs
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="text-base sm:text-lg font-bold text-white">Contact Us</h4>
-            <div className="space-y-2 sm:space-y-3">
-              <div className="flex items-start gap-2 sm:gap-3">
-                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                <p className="text-red-100 text-xs sm:text-sm">
-                  123 Fireworks Street, Sivakasi, Tamil Nadu 626123
-                </p>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 w-full">
+            {/* About */}
+            <div className="col-span-2 sm:col-span-2 md:col-span-1 space-y-3 sm:space-y-4">
+              <div className="flex items-center gap-2">
+                <img src="/footer-logo.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+                <h3 className="text-lg sm:text-xl font-bold text-white">KR FIREWORKS</h3>
               </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-red-100 hover:text-yellow-400 text-xs sm:text-sm">
-                  +91 98765 43210
-                </a>
+              <p className="text-red-100 text-xs sm:text-sm">
+                Your trusted source for premium quality Sivakasi fireworks. Bringing joy and sparkle to your celebrations since 2010.
+              </p>
+              <div className="flex gap-2 sm:gap-3">
+                <Button variant="ghost" size="icon" className="w-8 h-8 sm:w-10 sm:h-10 text-white hover:text-yellow-400 hover:bg-red-700">
+                  <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="w-8 h-8 sm:w-10 sm:h-10 text-white hover:text-yellow-400 hover:bg-red-700">
+                  <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Button>
+                <Button variant="ghost" size="icon" className="w-8 h-8 sm:w-10 sm:h-10 text-white hover:text-yellow-400 hover:bg-red-700">
+                  <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Button>
               </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
-                <a href="mailto:info@krfireworks.com" className="text-red-100 hover:text-yellow-400 text-xs sm:text-sm break-all">
-                  info@krfireworks.com
-                </a>
+            </div>
+
+            {/* Quick Links */}
+            <div className="space-y-3 sm:space-y-4">
+              <h4 className="text-base sm:text-lg font-bold text-white">Quick Links</h4>
+              <ul className="space-y-1.5 sm:space-y-2">
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Shop All Products
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Combo Offers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Safety Guidelines
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Track Order
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Policies */}
+            <div className="space-y-3 sm:space-y-4">
+              <h4 className="text-base sm:text-lg font-bold text-white">Policies</h4>
+              <ul className="space-y-1.5 sm:space-y-2">
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Shipping Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Return Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    Terms & Conditions
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="text-red-100 hover:text-yellow-400 transition-colors text-xs sm:text-sm">
+                    FAQs
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div className="space-y-3 sm:space-y-4">
+              <h4 className="text-base sm:text-lg font-bold text-white">Contact Us</h4>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-100 text-xs sm:text-sm">
+                    123 Fireworks Street, Sivakasi, Tamil Nadu 626123
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
+                  <a href="tel:+919876543210" className="text-red-100 hover:text-yellow-400 text-xs sm:text-sm">
+                    +91 98765 43210
+                  </a>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
+                  <a href="mailto:info@krfireworks.com" className="text-red-100 hover:text-yellow-400 text-xs sm:text-sm break-all">
+                    info@krfireworks.com
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 sm:pt-8 border-t border-red-500 text-center lg:pl-56">
+        <div className="pt-6 sm:pt-8 border-t border-red-500 text-center">
           <p className="text-red-100 text-xs sm:text-sm">
             © 2024 KR Fireworks. All rights reserved. | Authentic Sivakasi Crackers
           </p>

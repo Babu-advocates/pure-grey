@@ -74,11 +74,22 @@ const Shop = () => {
     fetchProducts();
   }, []);
 
-  // Handle category from URL params
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Handle category and search from URL params
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category');
+    const searchFromUrl = searchParams.get('search');
+
     if (categoryFromUrl) {
-      setSelectedCategory(categoryFromUrl);
+      setSelectedCategory("");
+      setSelectedCategories([categoryFromUrl]);
+    }
+
+    if (searchFromUrl) {
+      setSearchQuery(searchFromUrl);
+    } else {
+      setSearchQuery("");
     }
   }, [searchParams]);
 
@@ -108,7 +119,7 @@ const Shop = () => {
       const categoryCounts: Record<string, { name: string; count: number }> = {};
       data?.forEach(product => {
         const categoryName = product.category;
-        const normalizedCategory = categoryName.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
+        const normalizedCategory = categoryName.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '').replace(/[()]/g, '');
         if (!categoryCounts[normalizedCategory]) {
           categoryCounts[normalizedCategory] = { name: categoryName, count: 0 };
         }
@@ -166,16 +177,20 @@ const Shop = () => {
     setSelectedCategory("all");
     setMinPrice("");
     setMaxPrice("");
+    setSearchQuery("");
+    navigate("/shop"); // Clear URL params
   };
 
   // Check if any filters are active
-  const hasActiveFilters = selectedCategories.length > 0 || minPrice !== "" || maxPrice !== "";
+  const hasActiveFilters = selectedCategories.length > 0 || minPrice !== "" || maxPrice !== "" || searchQuery !== "";
 
-  // Filter products based on categories and price
+  // Filter products based on categories, price, and search query
   const filteredProducts = products.filter(p => {
     // Category filter
-    const normalizedCategory = p.category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '');
-    const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(normalizedCategory);
+    const productCategory = p.category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '').replace(/[()]/g, '');
+    const categoryMatch = selectedCategories.length === 0 || selectedCategories.some(selected =>
+      productCategory.includes(selected) || selected.includes(productCategory)
+    );
 
     // Price filter
     const productPrice = parsePrice(p.price);
@@ -183,7 +198,14 @@ const Shop = () => {
     const maxPriceNum = maxPrice ? parseFloat(maxPrice) : Infinity;
     const priceMatch = productPrice >= minPriceNum && productPrice <= maxPriceNum;
 
-    return categoryMatch && priceMatch;
+    // Search filter (Product Name, Category, Price)
+    const query = searchQuery.toLowerCase().trim();
+    const searchMatch = query === "" ||
+      p.name.toLowerCase().includes(query) ||
+      p.category.toLowerCase().includes(query) ||
+      p.price.toString().includes(query);
+
+    return categoryMatch && priceMatch && searchMatch;
   });
 
   return (
