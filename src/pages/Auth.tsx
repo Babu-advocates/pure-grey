@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, Flame, ArrowLeft } from "lucide-react";
-import heroFireworks from "@/assets/hero-fireworks.jpg";
+import { ArrowLeft, Mail, Lock, User } from "lucide-react";
+import krLogo from "@/assets/kr-fireworks-logo.png";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -84,169 +83,139 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
-      {/* Background with fireworks image */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${heroFireworks})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'brightness(0.3)'
-        }}
-      />
-      
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/20 via-background/50 to-accent/20" />
-      
-      {/* Back button */}
+    <div className="min-h-screen w-full flex items-center justify-center bg-white p-4">
       <Button
         variant="ghost"
         onClick={() => navigate("/")}
-        className="absolute top-4 left-4 z-10 text-foreground hover:text-primary hover:bg-primary/10"
+        className="absolute top-8 left-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
       >
-        <ArrowLeft className="w-5 h-5 mr-2" />
+        <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Home
       </Button>
-      
-      <div className="w-full max-w-md relative z-10">
-        <div className="flex flex-col items-center justify-center gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <Flame className="w-12 h-12 text-primary animate-glow-pulse" />
-            <Sparkles className="w-10 h-10 text-accent animate-glow-pulse" />
-            <Flame className="w-12 h-12 text-primary animate-glow-pulse" />
+
+      {/* Main Content Card */}
+      <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
+        <div className="bg-white border-2 border-blue-900 rounded-2xl shadow-xl p-8">
+
+          {/* Logo Section */}
+          <div className="flex flex-col items-center justify-center mb-8">
+            <div className="relative mb-6">
+              <img
+                src={krLogo}
+                alt="KR Fireworks"
+                className="relative h-16 object-contain"
+              />
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900">Welcome</h2>
+              <p className="text-gray-500">
+                Sign in to access your fireworks collection
+              </p>
+            </div>
           </div>
-          <h1 className="text-4xl font-black speed-text bg-gradient-gold bg-clip-text text-transparent text-center">
-            KR FIREWORKS
-          </h1>
-          <p className="text-muted-foreground text-center text-sm">
-            Light up your celebrations with spectacular fireworks!
-          </p>
-        </div>
 
-        <Card className="backdrop-blur-sm bg-card/95 border-primary/20 shadow-2xl shadow-primary/20">
-          <CardHeader className="text-center space-y-3">
-            <CardTitle className="text-3xl font-black bg-gradient-gold bg-clip-text text-transparent">
-              Join the Celebration
-            </CardTitle>
-            <CardDescription className="text-base">
-              🎆 Sign in to explore our explosive collection 🎆
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-primary/10 border border-primary/20">
-                <TabsTrigger 
-                  value="signin"
-                  className="data-[state=active]:bg-gradient-gold data-[state=active]:text-primary-foreground font-semibold"
-                >
-                  🎇 Sign In
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="signup"
-                  className="data-[state=active]:bg-gradient-gold data-[state=active]:text-primary-foreground font-semibold"
-                >
-                  ✨ Sign Up
-                </TabsTrigger>
-              </TabsList>
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 p-1">
+              <TabsTrigger value="signin" className="data-[state=active]:bg-white data-[state=active]:text-sky-600 data-[state=active]:shadow-sm text-gray-500 transition-all font-medium">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="data-[state=active]:bg-white data-[state=active]:text-sky-600 data-[state=active]:shadow-sm text-gray-500 transition-all font-medium">Sign Up</TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="signin" className="mt-6">
-                <form onSubmit={handleSignIn} className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email" className="text-foreground font-semibold flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      Email Address
-                    </Label>
+            <TabsContent value="signin" className="space-y-6">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email" className="text-gray-700 font-medium">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
                       id="signin-email"
                       name="email"
                       type="email"
-                      placeholder="your-email@celebration.com"
+                      placeholder="name@example.com"
                       required
-                      className="border-primary/30 focus:border-primary h-11"
+                      className="pl-10 h-11 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password" className="text-foreground font-semibold flex items-center gap-2">
-                      <Flame className="w-4 h-4 text-primary" />
-                      Password
-                    </Label>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password" className="text-gray-700 font-medium">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
                       id="signin-password"
                       name="password"
                       type="password"
-                      placeholder="Enter your password"
+                      placeholder="••••••••"
                       required
-                      className="border-primary/30 focus:border-primary h-11"
+                      className="pl-10 h-11 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
                     />
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full h-12 text-lg font-bold bg-gradient-gold hover:opacity-90 transition-opacity shadow-lg shadow-primary/30" 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Lighting the way..." : "🎆 Light Up & Sign In 🎆"}
-                  </Button>
-                </form>
-              </TabsContent>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full h-11 text-base font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/20 border-0 transition-colors"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Please wait..." : "Sign In"}
+                </Button>
+              </form>
+            </TabsContent>
 
-              <TabsContent value="signup" className="mt-6">
-                <form onSubmit={handleSignUp} className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name" className="text-foreground font-semibold flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      Full Name
-                    </Label>
+            <TabsContent value="signup" className="space-y-6">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name" className="text-gray-700 font-medium">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
                       id="signup-name"
                       name="fullName"
                       type="text"
-                      placeholder="Your celebration name"
+                      placeholder="John Doe"
                       required
-                      className="border-primary/30 focus:border-primary h-11"
+                      className="pl-10 h-11 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-foreground font-semibold flex items-center gap-2">
-                      <Flame className="w-4 h-4 text-primary" />
-                      Email Address
-                    </Label>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email" className="text-gray-700 font-medium">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
                       id="signup-email"
                       name="email"
                       type="email"
-                      placeholder="your-email@celebration.com"
+                      placeholder="name@example.com"
                       required
-                      className="border-primary/30 focus:border-primary h-11"
+                      className="pl-10 h-11 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-foreground font-semibold flex items-center gap-2">
-                      <Flame className="w-4 h-4 text-primary" />
-                      Password
-                    </Label>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password" className="text-gray-700 font-medium">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                     <Input
                       id="signup-password"
                       name="password"
                       type="password"
-                      placeholder="Create a strong password"
+                      placeholder="Create a password"
                       required
                       minLength={6}
-                      className="border-primary/30 focus:border-primary h-11"
+                      className="pl-10 h-11 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
                     />
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full h-12 text-lg font-bold bg-gradient-gold hover:opacity-90 transition-opacity shadow-lg shadow-primary/30" 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Sparking your account..." : "🎇 Spark Your Account 🎇"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full h-11 text-base font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/20 border-0 transition-colors"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating account..." : "Create Account"}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

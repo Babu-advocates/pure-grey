@@ -6,6 +6,7 @@ import { Shield, LogOut, Users, Package, ShoppingCart, TrendingUp, Menu, BarChar
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import krLogo from "@/assets/kr-fireworks-logo.png";
 
 interface DashboardStats {
   totalUsers: number;
@@ -150,21 +151,19 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Admin Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-destructive/30 shadow-lg shadow-destructive/10">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo & Title */}
-            <div className="flex items-center gap-3 group cursor-pointer">
-              <div className="relative">
-                <Shield className="w-8 h-8 text-destructive animate-glow-pulse group-hover:rotate-12 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-destructive/20 blur-xl animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-black speed-text bg-gradient-to-r from-destructive via-accent to-primary bg-clip-text text-transparent group-hover:scale-105 transition-transform">
-                  ADMIN PANEL
-                </h1>
-                <p className="text-xs text-muted-foreground">KR Fireworks Control Center</p>
-              </div>
+            <div className="flex flex-col items-start gap-1 select-none">
+              <img
+                src={krLogo}
+                alt="KR Fireworks"
+                className="h-10 md:h-12 object-contain"
+              />
+              <p className="text-sm font-semibold text-red-600 italic tracking-wide font-serif">
+                'n' joy with Every moments...
+              </p>
             </div>
 
             <div className="hidden md:flex items-center gap-6">
@@ -389,8 +388,8 @@ const AdminDashboard = () => {
                           <Badge
                             variant="outline"
                             className={`text-[10px] sm:text-xs ${order.status === 'completed' ? 'bg-primary/10 text-primary border-primary/30' :
-                                order.status === 'processing' ? 'bg-secondary/10 text-secondary border-secondary/30' :
-                                  'bg-muted text-muted-foreground border-border'
+                              order.status === 'processing' ? 'bg-secondary/10 text-secondary border-secondary/30' :
+                                'bg-muted text-muted-foreground border-border'
                               }`}
                           >
                             {order.status === 'completed' ? <CheckCircle className="w-3 h-3 mr-1" /> :
@@ -418,7 +417,7 @@ const AdminDashboard = () => {
             <CardContent className="pt-6 space-y-3">
               <Button
                 onClick={() => navigate('/admin/products')}
-                className="w-full h-14 bg-gradient-to-r from-primary via-secondary to-primary hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/20 group bg-[length:200%_100%] hover:bg-[position:100%_0] animate-shimmer text-lg font-bold"
+                className="w-full h-14 bg-red-600 hover:bg-red-700 text-white shadow-sm transition-all duration-300 group text-lg font-bold"
               >
                 <Package className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
                 Add New Product

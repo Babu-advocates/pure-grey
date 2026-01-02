@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, LogOut, Menu, Package, ArrowLeft, Calendar, User, Phone, Mail, MapPin, IndianRupee } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import krLogo from "@/assets/kr-fireworks-logo.png";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -40,7 +41,7 @@ const AdminOrders = () => {
 
   const checkAdminAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       navigate('/admin');
       return;
@@ -99,7 +100,7 @@ const AdminOrders = () => {
 
       if (error) throw error;
 
-      setOrders(orders.map(order => 
+      setOrders(orders.map(order =>
         order.id === orderId ? { ...order, status: newStatus } : order
       ));
 
@@ -135,7 +136,7 @@ const AdminOrders = () => {
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    
+
     return (
       <Badge variant={config.variant} className={config.className}>
         {status}
@@ -148,20 +149,19 @@ const AdminOrders = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Admin Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-destructive/30 shadow-lg shadow-destructive/10">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/admin/dashboard')}>
-              <div className="relative">
-                <Shield className="w-8 h-8 text-destructive animate-glow-pulse group-hover:rotate-12 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-destructive/20 blur-xl animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-black speed-text bg-gradient-to-r from-destructive via-accent to-primary bg-clip-text text-transparent group-hover:scale-105 transition-transform">
-                  ADMIN PANEL
-                </h1>
-                <p className="text-xs text-muted-foreground">KR Fireworks Control Center</p>
-              </div>
+            {/* Logo & Title */}
+            <div className="flex flex-col items-start gap-1 select-none">
+              <img
+                src={krLogo}
+                alt="KR Fireworks"
+                className="h-10 md:h-12 object-contain"
+              />
+              <p className="text-sm font-semibold text-red-600 italic tracking-wide font-serif">
+                'n' joy with Every moments...
+              </p>
             </div>
 
             <div className="hidden md:flex items-center gap-6">
@@ -197,7 +197,7 @@ const AdminOrders = () => {
                   Admin
                 </Badge>
               </div>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="ghost"
                 className="hidden md:flex hover:bg-destructive/10 hover:text-destructive transition-all duration-300 group"
@@ -205,7 +205,7 @@ const AdminOrders = () => {
                 <LogOut className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
                 Logout
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -238,7 +238,7 @@ const AdminOrders = () => {
               <Link to="/admin/users" className="block py-2 text-foreground hover:text-primary transition-colors font-medium">
                 Users
               </Link>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="ghost"
                 className="w-full justify-start hover:bg-destructive/10 hover:text-destructive"

@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import krLogo from "@/assets/kr-fireworks-logo.png";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,7 +78,7 @@ const AdminCategories = () => {
   const loadCategoriesWithCounts = async () => {
     try {
       setLoading(true);
-      
+
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
         .select('*')
@@ -116,7 +117,7 @@ const AdminCategories = () => {
 
   const checkAdminAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       navigate('/admin');
       return;
@@ -233,7 +234,7 @@ const AdminCategories = () => {
 
     try {
       setSaving(true);
-      
+
       // First create the category to get the ID
       const { data, error } = await supabase
         .from('categories')
@@ -255,14 +256,14 @@ const AdminCategories = () => {
           .from('categories')
           .update({ icon: iconUrl })
           .eq('id', data.id);
-        
+
         if (updateError) throw updateError;
       }
 
       setCategories([...categories, { ...data, icon: iconUrl, productCount: 0 }]);
       setIsAddDialogOpen(false);
       resetForm();
-      
+
       toast({
         title: "Category Added",
         description: `${data.name} has been added successfully.`,
@@ -291,7 +292,7 @@ const AdminCategories = () => {
 
     try {
       setSaving(true);
-      
+
       let iconUrl = formData.icon;
       if (iconFile) {
         iconUrl = await uploadIcon(selectedCategory.id);
@@ -310,15 +311,15 @@ const AdminCategories = () => {
 
       if (error) throw error;
 
-      setCategories(categories.map(c => 
-        c.id === selectedCategory.id 
-          ? { ...data, productCount: c.productCount } 
+      setCategories(categories.map(c =>
+        c.id === selectedCategory.id
+          ? { ...data, productCount: c.productCount }
           : c
       ));
       setIsEditDialogOpen(false);
       setSelectedCategory(null);
       resetForm();
-      
+
       toast({
         title: "Category Updated",
         description: `${data.name} has been updated successfully.`,
@@ -340,7 +341,7 @@ const AdminCategories = () => {
 
     try {
       setSaving(true);
-      
+
       // Delete icon from storage if it exists
       if (selectedCategory.icon) {
         const fileName = selectedCategory.icon.split('/').pop();
@@ -358,12 +359,12 @@ const AdminCategories = () => {
 
       setCategories(categories.filter(c => c.id !== selectedCategory.id));
       setIsDeleteDialogOpen(false);
-      
+
       toast({
         title: "Category Deleted",
         description: `${selectedCategory.name} has been deleted successfully.`,
       });
-      
+
       setSelectedCategory(null);
     } catch (error: any) {
       console.error('Error deleting category:', error);
@@ -417,20 +418,19 @@ const AdminCategories = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Admin Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-destructive/30 shadow-lg shadow-destructive/10">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/admin/dashboard')}>
-              <div className="relative">
-                <Shield className="w-8 h-8 text-destructive animate-glow-pulse group-hover:rotate-12 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-destructive/20 blur-xl animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-black speed-text bg-gradient-to-r from-destructive via-accent to-primary bg-clip-text text-transparent group-hover:scale-105 transition-transform">
-                  ADMIN PANEL
-                </h1>
-                <p className="text-xs text-muted-foreground">KR Fireworks Control Center</p>
-              </div>
+            {/* Logo & Title */}
+            <div className="flex flex-col items-start gap-1 select-none">
+              <img
+                src={krLogo}
+                alt="KR Fireworks"
+                className="h-10 md:h-12 object-contain"
+              />
+              <p className="text-sm font-semibold text-red-600 italic tracking-wide font-serif">
+                'n' joy with Every moments...
+              </p>
             </div>
 
             <div className="hidden md:flex items-center gap-6">
@@ -466,7 +466,7 @@ const AdminCategories = () => {
                   Admin
                 </Badge>
               </div>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="ghost"
                 className="hidden md:flex hover:bg-destructive/10 hover:text-destructive transition-all duration-300 group"
@@ -474,7 +474,7 @@ const AdminCategories = () => {
                 <LogOut className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
                 Logout
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -507,7 +507,7 @@ const AdminCategories = () => {
               <Link to="/admin/users" className="block py-2 text-foreground hover:text-primary transition-colors font-medium">
                 Users
               </Link>
-              <Button 
+              <Button
                 onClick={handleLogout}
                 variant="ghost"
                 className="w-full justify-start hover:bg-destructive/10 hover:text-destructive"
@@ -530,7 +530,7 @@ const AdminCategories = () => {
               </h2>
               <p className="text-muted-foreground text-lg">Manage product categories</p>
             </div>
-            <Button 
+            <Button
               onClick={openAddDialog}
               className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
             >
@@ -592,8 +592,8 @@ const AdminCategories = () => {
                       <TableRow key={category.id} className="hover:bg-muted/30 transition-colors">
                         <TableCell>
                           {category.icon ? (
-                            <img 
-                              src={category.icon} 
+                            <img
+                              src={category.icon}
                               alt={category.name}
                               className="w-10 h-10 rounded-lg object-cover border border-border"
                             />
@@ -661,16 +661,16 @@ const AdminCategories = () => {
                 className="border-border focus:border-primary"
               />
             </div>
-            
+
             {/* Icon Upload */}
             <div className="space-y-2">
               <Label className="text-foreground font-semibold">Category Icon (Optional)</Label>
               <div className="flex items-center gap-4">
                 {iconPreview ? (
                   <div className="relative">
-                    <img 
-                      src={iconPreview} 
-                      alt="Icon preview" 
+                    <img
+                      src={iconPreview}
+                      alt="Icon preview"
                       className="w-20 h-20 rounded-lg object-cover border border-border"
                     />
                     <Button
@@ -684,7 +684,7 @@ const AdminCategories = () => {
                     </Button>
                   </div>
                 ) : (
-                  <div 
+                  <div
                     className="w-20 h-20 rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex items-center justify-center cursor-pointer transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                   >
@@ -725,15 +725,15 @@ const AdminCategories = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsAddDialogOpen(false)}
               className="border-border hover:bg-muted"
               disabled={saving || uploading}
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleAddCategory}
               className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
               disabled={saving || uploading}
@@ -766,16 +766,16 @@ const AdminCategories = () => {
                 className="border-border focus:border-primary"
               />
             </div>
-            
+
             {/* Icon Upload */}
             <div className="space-y-2">
               <Label className="text-foreground font-semibold">Category Icon (Optional)</Label>
               <div className="flex items-center gap-4">
                 {iconPreview ? (
                   <div className="relative">
-                    <img 
-                      src={iconPreview} 
-                      alt="Icon preview" 
+                    <img
+                      src={iconPreview}
+                      alt="Icon preview"
                       className="w-20 h-20 rounded-lg object-cover border border-border"
                     />
                     <Button
@@ -792,7 +792,7 @@ const AdminCategories = () => {
                     </Button>
                   </div>
                 ) : (
-                  <div 
+                  <div
                     className="w-20 h-20 rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex items-center justify-center cursor-pointer transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                   >
@@ -833,15 +833,15 @@ const AdminCategories = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsEditDialogOpen(false)}
               className="border-border hover:bg-muted"
               disabled={saving || uploading}
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleEditCategory}
               className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
               disabled={saving || uploading}
