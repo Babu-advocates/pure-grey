@@ -12,6 +12,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminCategories from "./pages/AdminCategories";
 import AdminOrders from "./pages/AdminOrders";
 import AdminUsers from "./pages/AdminUsers";
+import AdminReviews from "./pages/AdminReviews";
 import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
 import Combos from "./pages/Combos";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/reviews" element={<AdminReviews />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/combos" element={<Combos />} />

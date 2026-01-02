@@ -192,6 +192,10 @@ const AdminUsers = () => {
                 Users
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
               </Link>
+              <Link to="/admin/reviews" className="text-foreground hover:text-primary transition-all duration-300 font-medium relative group">
+                Reviews
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
+              </Link>
             </div>
 
             <div className="flex items-center gap-4">
@@ -244,6 +248,9 @@ const AdminUsers = () => {
               </Link>
               <Link to="/admin/users" className="block py-2 text-primary transition-colors font-medium">
                 Users
+              </Link>
+              <Link to="/admin/reviews" className="block py-2 text-foreground hover:text-primary transition-colors font-medium">
+                Reviews
               </Link>
               <Button
                 onClick={handleLogout}

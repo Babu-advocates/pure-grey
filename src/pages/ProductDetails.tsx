@@ -16,6 +16,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { useCart } from "@/hooks/useCart";
+import { ReviewList } from "@/components/reviews/ReviewList";
+import { ReviewForm } from "@/components/reviews/ReviewForm";
+import { QuestionList } from "@/components/qa/QuestionList";
+import { QuestionForm } from "@/components/qa/QuestionForm";
 
 interface Product {
   id: string;
@@ -62,12 +66,14 @@ const ProductDetails = () => {
   const [pincodeError, setPincodeError] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("");
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [reviewRefreshTrigger, setReviewRefreshTrigger] = useState(0);
+  const [qaRefreshTrigger, setQaRefreshTrigger] = useState(0);
 
   const handleSave = () => {
     setIsSaved(!isSaved);
     toast({
       title: isSaved ? "Removed from wishlist" : "Added to wishlist",
-      description: isSaved 
+      description: isSaved
         ? `${product?.name} removed from your wishlist.`
         : `${product?.name} added to your wishlist.`,
     });
@@ -106,10 +112,10 @@ const ProductDetails = () => {
 
   const handlePincodeSubmit = () => {
     setPincodeError("");
-    
+
     // Validate pincode
     const validation = pincodeSchema.safeParse({ pincode });
-    
+
     if (!validation.success) {
       setPincodeError(validation.error.errors[0].message);
       return;
@@ -117,7 +123,7 @@ const ProductDetails = () => {
 
     // Mock delivery check - in real app, this would call an API
     const isServiceable = true; // Simulate API response
-    
+
     if (isServiceable) {
       setDeliveryLocation(pincode);
       setLocationDialogOpen(false);
@@ -149,12 +155,12 @@ const ProductDetails = () => {
         quantity: parseInt(quantity),
         unit: product.unit,
       });
-      
+
       toast({
         title: "Proceeding to checkout",
         description: `Buying ${quantity} ${product.name}`,
       });
-      
+
       // Navigate to checkout page
       navigate('/checkout');
     }
@@ -171,7 +177,7 @@ const ProductDetails = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch main product
       const { data: productData, error: productError } = await supabase
         .from('products')
@@ -234,25 +240,25 @@ const ProductDetails = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-4 max-w-[1500px]">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-sm py-3 text-muted-foreground">
-          <span 
+          <span
             className="hover:text-primary hover:underline cursor-pointer"
             onClick={() => navigate('/')}
           >
             Home
           </span>
           <span>/</span>
-          <span 
+          <span
             className="hover:text-primary hover:underline cursor-pointer"
             onClick={() => navigate('/shop')}
           >
             Shop
           </span>
           <span>/</span>
-          <span 
+          <span
             className="hover:text-primary hover:underline cursor-pointer"
             onClick={() => navigate(`/shop?category=${product.category}`)}
           >
@@ -264,7 +270,7 @@ const ProductDetails = () => {
 
         {/* Main Product Section */}
         <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 py-4">
-          
+
           {/* Left: Product Images - 5 columns */}
           <div className="lg:col-span-5">
             <div className="sticky top-4 space-y-4">
@@ -282,12 +288,12 @@ const ProductDetails = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* Image Thumbnails */}
               {productImages.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {productImages.map((img, index) => (
-                    <div 
+                    <div
                       key={index}
                       className={`border-2 ${index === selectedImageIndex ? 'border-primary' : 'border-border'} rounded-md overflow-hidden min-w-[60px] h-[60px] cursor-pointer hover:border-primary transition-colors`}
                       onClick={() => setSelectedImageIndex(index)}
@@ -304,16 +310,16 @@ const ProductDetails = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1 gap-2"
                   onClick={handleSave}
                 >
                   <Heart className={`w-4 h-4 ${isSaved ? 'fill-destructive text-destructive' : ''}`} />
                   {isSaved ? 'Saved' : 'Save'}
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex-1 gap-2"
                   onClick={handleShare}
                 >
@@ -340,9 +346,9 @@ const ProductDetails = () => {
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star 
-                    key={star} 
-                    className="w-4 h-4 fill-primary text-primary" 
+                  <Star
+                    key={star}
+                    className="w-4 h-4 fill-primary text-primary"
                   />
                 ))}
               </div>
@@ -377,7 +383,7 @@ const ProductDetails = () => {
                   {deliveryLocation ? (
                     <div>
                       <p className="text-sm text-foreground">Pincode: {deliveryLocation}</p>
-                      <p 
+                      <p
                         className="text-xs text-primary hover:underline cursor-pointer"
                         onClick={handleSelectLocation}
                       >
@@ -385,7 +391,7 @@ const ProductDetails = () => {
                       </p>
                     </div>
                   ) : (
-                    <p 
+                    <p
                       className="text-sm text-primary hover:underline cursor-pointer"
                       onClick={handleSelectLocation}
                     >
@@ -461,7 +467,7 @@ const ProductDetails = () => {
                     <p className="text-xs text-muted-foreground">
                       Order within 2 hrs 30 mins
                     </p>
-                    <p 
+                    <p
                       className="text-xs text-primary hover:underline cursor-pointer"
                       onClick={handleDeliveryDetails}
                     >
@@ -503,8 +509,8 @@ const ProductDetails = () => {
                   </div>
 
                   {/* Add to Cart Button */}
-                  <Button 
-                    className="w-full h-11 bg-primary hover:bg-primary/90" 
+                  <Button
+                    className="w-full h-11 bg-primary hover:bg-primary/90"
                     disabled={product.stock === 0}
                     onClick={() => {
                       addItem({
@@ -526,8 +532,8 @@ const ProductDetails = () => {
                   </Button>
 
                   {/* Buy Now Button */}
-                  <Button 
-                    className="w-full h-11" 
+                  <Button
+                    className="w-full h-11"
                     variant="secondary"
                     disabled={product.stock === 0}
                     onClick={handleBuyNow}
@@ -564,33 +570,33 @@ const ProductDetails = () => {
         <div className="py-8">
           <Tabs defaultValue="details" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-              <TabsTrigger 
-                value="details" 
+              <TabsTrigger
+                value="details"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3"
               >
                 Product Details
               </TabsTrigger>
-              <TabsTrigger 
-                value="reviews" 
+              <TabsTrigger
+                value="reviews"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3"
               >
                 Customer Reviews
               </TabsTrigger>
-              <TabsTrigger 
-                value="qa" 
+              <TabsTrigger
+                value="qa"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3"
               >
                 Questions & Answers
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="details" className="py-6 space-y-4">
               <div className="prose prose-sm max-w-none">
                 <h3 className="text-lg font-bold mb-3">Product Description</h3>
                 <p className="text-muted-foreground leading-relaxed">
                   {product.description}
                 </p>
-                
+
                 <h3 className="text-lg font-bold mb-3 mt-6">Technical Details</h3>
                 <table className="w-full max-w-2xl border-collapse">
                   <tbody>
@@ -616,19 +622,32 @@ const ProductDetails = () => {
                 </table>
               </div>
             </TabsContent>
-            
-            <TabsContent value="reviews" className="py-6">
-              <div className="text-center py-12 text-muted-foreground">
-                <Star className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                <p>Customer reviews coming soon</p>
-              </div>
+
+            <TabsContent value="reviews" className="py-6 space-y-8">
+              <ReviewForm
+                productId={product.id}
+                onReviewSubmitted={() => setReviewRefreshTrigger(prev => prev + 1)}
+              />
+              <Separator />
+              <ReviewList
+                productId={product.id}
+                refreshTrigger={reviewRefreshTrigger}
+              />
             </TabsContent>
-            
-            <TabsContent value="qa" className="py-6">
-              <div className="text-center py-12 text-muted-foreground">
-                <Package className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                <p>No questions yet. Be the first to ask!</p>
+
+            <TabsContent value="qa" className="py-6 space-y-8">
+              <div className="bg-muted/30 p-4 rounded-lg">
+                <h3 className="font-semibold mb-4">Ask a Question</h3>
+                <QuestionForm
+                  productId={product.id}
+                  onQuestionSubmitted={() => setQaRefreshTrigger(prev => prev + 1)}
+                />
               </div>
+              <Separator />
+              <QuestionList
+                productId={product.id}
+                refreshTrigger={qaRefreshTrigger}
+              />
             </TabsContent>
           </Tabs>
         </div>
@@ -641,8 +660,8 @@ const ProductDetails = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {relatedProducts.map((related) => (
-                <Card 
-                  key={related.id} 
+                <Card
+                  key={related.id}
                   className="group overflow-hidden hover:shadow-lg transition-all cursor-pointer border"
                   onClick={() => {
                     navigate(`/product/${related.id}`);
@@ -734,9 +753,9 @@ const ProductDetails = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => {
                 setLocationDialogOpen(false);
                 setPincode("");
@@ -745,8 +764,8 @@ const ProductDetails = () => {
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               onClick={handlePincodeSubmit}
               disabled={pincode.length !== 6}
             >
