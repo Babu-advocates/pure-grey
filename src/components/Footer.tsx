@@ -154,6 +154,11 @@ const Footer = () => {
           <p className="text-red-100 text-xs sm:text-sm">
             © 2024 KR Fireworks. All rights reserved. | Authentic Sivakasi Crackers
           </p>
+          <p className="text-red-200/80 text-xs sm:text-sm mt-2 font-medium">
+            <a href="tel:8248329035" className="hover:text-white transition-colors">
+              Powered by Techverse Infotech
+            </a>
+          </p>
         </div>
       </div>
     </footer>
