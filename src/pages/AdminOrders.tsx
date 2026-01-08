@@ -129,10 +129,12 @@ const AdminOrders = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { variant: "outline" as const, className: "bg-muted text-muted-foreground border-border" },
-      processing: { variant: "outline" as const, className: "bg-secondary/10 text-secondary border-secondary/30" },
-      completed: { variant: "outline" as const, className: "bg-primary/10 text-primary border-primary/30" },
-      cancelled: { variant: "outline" as const, className: "bg-destructive/10 text-destructive border-destructive/30" }
+      pending: { variant: "outline" as const, className: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+      processing: { variant: "outline" as const, className: "bg-blue-100 text-blue-700 border-blue-200" },
+      shipped: { variant: "outline" as const, className: "bg-orange-100 text-orange-700 border-orange-200" },
+      delivered: { variant: "outline" as const, className: "bg-green-100 text-green-700 border-green-200" },
+      completed: { variant: "outline" as const, className: "bg-green-100 text-green-700 border-green-200" }, // Legacy support
+      cancelled: { variant: "outline" as const, className: "bg-red-100 text-red-700 border-red-200" }
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
@@ -316,7 +318,8 @@ const AdminOrders = () => {
                         <SelectContent>
                           <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="processing">Processing</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="shipped">Shipped</SelectItem>
+                          <SelectItem value="delivered">Delivered</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>
                       </Select>
